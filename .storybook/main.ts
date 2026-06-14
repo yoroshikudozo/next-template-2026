@@ -7,6 +7,8 @@ const config: StorybookConfig = {
     "@storybook/addon-vitest",
     "@storybook/addon-a11y",
     "@storybook/addon-docs",
+    // Serves an MCP endpoint at http://localhost:6006/mcp (see .mcp.json).
+    "@storybook/addon-mcp",
   ],
   framework: "@storybook/nextjs-vite",
   staticDirs: ["../public"],
