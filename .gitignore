@@ -55,3 +55,4 @@ storybook-static
 
 # claude code: personal/local settings (project settings.json is tracked)
 .claude/settings.local.json
+.claude/.run/
