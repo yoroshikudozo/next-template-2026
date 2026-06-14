@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/with-env.mjs .env.loc next dev",
     "build": "next build",
+    "build:stg": "node scripts/with-env.mjs .env.stg next build",
+    "build:prod": "node scripts/with-env.mjs .env.prod next build",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",

@@ -36,9 +36,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files: secrets stay ignored (.env.local), non-secret per-env config is tracked
 .env*
 !.env.example
+!.env.loc
+!.env.stg
+!.env.prod
 
 # vercel
 .vercel
