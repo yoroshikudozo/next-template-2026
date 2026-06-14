@@ -1,0 +1,73 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm install *)",
+      "Bash(npm uninstall *)",
+      "Bash(npm view *)",
+      "Bash(npm ls *)",
+      "Bash(npx vitest *)",
+      "Bash(npx playwright *)",
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)",
+      "Bash(npx prettier *)",
+      "Bash(npx shadcn@latest *)",
+      "Bash(npx storybook *)",
+      "Bash(npx msw *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git restore *)",
+      "WebFetch(domain:storybook.js.org)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "WebFetch(domain:mswjs.io)",
+      "WebFetch(domain:github.com)"
+    ]
+  },
+  "env": {
+    "NEXT_PUBLIC_API_MOCKING": "enabled"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "$CLAUDE_PROJECT_DIR/.claude/statusline.sh"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/format-changed.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/verify.sh"
+          },
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"完了\" with title \"Claude Code\"'"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"要確認\" with title \"Claude Code\"'"
+          }
+        ]
+      }
+    ]
+  }
+}
