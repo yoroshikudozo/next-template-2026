@@ -1,14 +1,14 @@
 export type User = {
-  id: string;
-  name: string;
-};
+  id: string
+  name: string
+}
 
 export async function getUser(): Promise<User> {
-  const response = await fetch("https://api.example.com/user");
+  const response = await fetch("https://api.example.com/user")
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch user: ${response.status}`);
+    throw new Error(`Failed to fetch user: ${response.status}`)
   }
 
-  return response.json();
+  return response.json()
 }

@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { Suspense, use } from "react";
+import { Suspense, use } from "react"
 
 // Starts the MSW browser worker once, before client components render, when
 // NEXT_PUBLIC_API_MOCKING=enabled. The promise is created at module scope so it
@@ -13,17 +13,17 @@ const mockingEnabledPromise =
           onUnhandledRequest(request, print) {
             // Let Next.js internal requests pass through silently.
             if (new URL(request.url).pathname.startsWith("/_next")) {
-              return;
+              return
             }
-            print.warning();
+            print.warning()
           },
-        });
+        })
       })
-    : Promise.resolve();
+    : Promise.resolve()
 
 export function MSWProvider({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  use(mockingEnabledPromise);
-  return <Suspense>{children}</Suspense>;
+  use(mockingEnabledPromise)
+  return <Suspense>{children}</Suspense>
 }

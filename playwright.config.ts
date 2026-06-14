@@ -1,7 +1,7 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test"
 
-const PORT = 3000;
-const baseURL = `http://localhost:${PORT}`;
+const PORT = 3000
+const baseURL = `http://localhost:${PORT}`
 
 export default defineConfig({
   testDir: "./e2e",
@@ -26,4 +26,4 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },
-});
+})

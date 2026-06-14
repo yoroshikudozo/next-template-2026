@@ -1,11 +1,11 @@
-import type { Preview } from "@storybook/nextjs-vite";
-import { initialize, mswLoader } from "msw-storybook-addon";
-import { handlers } from "../src/mocks/handlers";
-import "../src/app/globals.css";
+import type { Preview } from "@storybook/nextjs-vite"
+import { initialize, mswLoader } from "msw-storybook-addon"
+import { handlers } from "../src/mocks/handlers"
+import "../src/app/globals.css"
 
 // Start the MSW worker once for all stories. The worker script is served from
 // /public via Storybook's staticDirs.
-initialize({ onUnhandledRequest: "bypass" });
+initialize({ onUnhandledRequest: "bypass" })
 
 const preview: Preview = {
   parameters: {
@@ -26,6 +26,6 @@ const preview: Preview = {
     msw: { handlers },
   },
   loaders: [mswLoader],
-};
+}
 
-export default preview;
+export default preview

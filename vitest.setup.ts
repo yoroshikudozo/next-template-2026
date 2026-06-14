@@ -1,17 +1,17 @@
-import "@testing-library/jest-dom/vitest";
-import { cleanup } from "@testing-library/react";
-import { afterAll, afterEach, beforeAll } from "vitest";
-import { server } from "@/mocks/node";
+import "@testing-library/jest-dom/vitest"
+import { cleanup } from "@testing-library/react"
+import { afterAll, afterEach, beforeAll } from "vitest"
+import { server } from "@/mocks/node"
 
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
-});
+  server.listen({ onUnhandledRequest: "error" })
+})
 
 afterEach(() => {
-  cleanup();
-  server.resetHandlers();
-});
+  cleanup()
+  server.resetHandlers()
+})
 
 afterAll(() => {
-  server.close();
-});
+  server.close()
+})
