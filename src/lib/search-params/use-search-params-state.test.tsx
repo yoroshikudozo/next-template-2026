@@ -2,8 +2,10 @@ import { act, renderHook } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
 const push = vi.fn()
+// 実 Next の useRouter は安定参照を返すので、モックも毎回同じ object を返す。
+const router = { push }
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push }),
+  useRouter: () => router,
   usePathname: () => "/search",
   useSearchParams: () => new URLSearchParams("type=0,1&page=2"),
 }))
@@ -22,6 +24,16 @@ describe("useSearchParamsState", () => {
   it("現在の URL を型付き値として読む", () => {
     const { result } = renderHook(() => useSearchParamsState(sp))
     expect(result.current[0]).toEqual({ type: [0, 1], page: 2, q: "" })
+  })
+
+  it("再レンダーしても values / setValues の identity が安定する", () => {
+    const { result, rerender } = renderHook(() => useSearchParamsState(sp))
+    const [values1, setValues1] = result.current
+    rerender()
+    const [values2, setValues2] = result.current
+    // URL（query）が変わらなければ再 parse もコールバック再生成も起きない
+    expect(values2).toBe(values1)
+    expect(setValues2).toBe(setValues1)
   })
 
   it("setValues は既存値とマージして router.push する", () => {

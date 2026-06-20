@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 import type { SearchParamsInput } from "./factory"
 
 interface SearchParamsApi<V extends Record<string, unknown>> {
@@ -25,12 +25,14 @@ export function useSearchParamsState<V extends Record<string, unknown>>(
   const params = useSearchParams()
 
   // 文字列経由で渡し、ReadonlyURLSearchParams の instanceof 差異を回避する。
-  const values = sp.parse(params.toString())
+  // URL（query）が変わらない限り values の identity を保ち、再 parse も避ける。
+  const query = params.toString()
+  const values = useMemo(() => sp.parse(query), [sp, query])
 
   const setValues = useCallback(
     (patch: Partial<V>) => {
-      const query = sp.serialize({ ...values, ...patch })
-      router.push(query ? `${pathname}?${query}` : pathname)
+      const next = sp.serialize({ ...values, ...patch })
+      router.push(next ? `${pathname}?${next}` : pathname)
     },
     [router, pathname, sp, values],
   )
