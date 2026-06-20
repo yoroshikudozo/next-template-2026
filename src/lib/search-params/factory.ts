@@ -60,7 +60,9 @@ export function createSearchParams<S extends Schema>(schema: S) {
       const encoded = schema[key].encode(values[key])
       if (encoded !== undefined) wire[key] = encoded
     }
-    return qs.stringify(wire, { arrayFormat: "repeat" })
+    // カンマは query に安全なリテラルとして残す（閉じた集合の `?type=0,1` を
+    // %2C に潰さず読みやすく保つ）。値側のカンマも parse 時に正しく戻る。
+    return qs.stringify(wire, { arrayFormat: "repeat" }).replace(/%2C/gi, ",")
   }
 
   return { parse, serialize }
