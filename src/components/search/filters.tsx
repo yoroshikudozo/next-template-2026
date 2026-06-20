@@ -1,11 +1,11 @@
 "use client"
 
 import { useSearchParamsState } from "@/lib/search-params/use-search-params-state"
-import { search, SORT_OPTIONS } from "./search-schema"
+import { search, SORT_OPTIONS } from "@/features/search/schema"
 
 /**
  * クライアント側のフィルタ UI。URL と双方向に同期する。
- * useSearchParams を使うので、親で <Suspense> に包む（page.tsx 参照）。
+ * useSearchParams を使うので、親で <Suspense> に包む（SearchView 参照）。
  */
 export function Filters() {
   const [values, setValues] = useSearchParamsState(search)

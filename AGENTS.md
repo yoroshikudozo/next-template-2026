@@ -6,6 +6,21 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 <!-- END:nextjs-agent-rules -->
 
+# Directory layout
+
+Three layers, with a one-way dependency direction: **`app` → `features` → `lib`**.
+
+- **`src/app/`** — routing only. `page.tsx`/`layout.tsx` await route props and
+  delegate to a `features/` component. Keep them thin; no feature logic here.
+- **`src/features/<name>/`** — non-component feature logic (its `schema.ts`,
+  `hooks/`, `api/`, `types.ts`). A feature may import from `lib` and its own
+  folder — never deep-import another feature (promote shared code to `lib`).
+- **`src/components/`** — all React components. Generic primitives in
+  `components/ui/`; feature components grouped in `components/<feature>/`.
+- **`src/lib/`** — generic, feature-agnostic, reusable anywhere (e.g.
+  `lib/search-params` mechanism, `lib/api` transport). `lib` must not know about
+  any feature; if it imports from `features/`, it's misplaced.
+
 # Module conventions
 
 - **No barrel files for internal code.** Don't add `index.ts` re-export files

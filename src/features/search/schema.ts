@@ -4,7 +4,7 @@ import { field } from "@/lib/search-params/field"
 export const SORT_OPTIONS = ["new", "popular"] as const
 
 /**
- * /search のクエリ定義。サーバー（page）とクライアント（filters）が
+ * search 機能のクエリ定義。サーバー（SearchView）とクライアント（Filters）が
  * この 1 つを共有する。`?q=shoes&type=0,1&sort=popular&page=2`
  */
 export const search = createSearchParams({
