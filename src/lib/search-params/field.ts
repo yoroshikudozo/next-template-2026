@@ -3,9 +3,6 @@ import * as v from "valibot"
 import { ensureArray, firstOf, oneOf, splitComma, toNumber } from "./decode"
 import { joinComma, omitEmpty, repeat, toStr } from "./encode"
 
-/** クエリの生値（multimap）。 */
-type Raw = string | string[] | undefined
-
 /**
  * 1 つの検索パラメータの定義。
  *
@@ -25,9 +22,9 @@ function string(fallback = ""): Field<string> {
   return {
     schema: v.pipe(
       v.unknown(),
-      v.transform((raw) => firstOf(raw as Raw) ?? fallback),
+      v.transform((raw) => firstOf(raw) ?? fallback),
       v.string(),
-    ) as StandardSchemaV1<unknown, string>,
+    ),
     encode: (value) => omitEmpty(value),
   }
 }
@@ -37,9 +34,9 @@ function number(fallback = 0): Field<number> {
   return {
     schema: v.pipe(
       v.unknown(),
-      v.transform((raw) => toNumber(firstOf(raw as Raw), fallback)),
+      v.transform((raw) => toNumber(firstOf(raw), fallback)),
       v.number(),
-    ) as StandardSchemaV1<unknown, number>,
+    ),
     encode: (value) => toStr(value),
   }
 }
@@ -52,9 +49,9 @@ function enums<const T extends string>(
   return {
     schema: v.pipe(
       v.unknown(),
-      v.transform((raw) => oneOf(firstOf(raw as Raw), allowed, fallback)),
+      v.transform((raw) => oneOf(firstOf(raw), allowed, fallback)),
       v.picklist(allowed),
-    ) as StandardSchemaV1<unknown, T>,
+    ),
     encode: (value) => omitEmpty(value),
   }
 }
@@ -65,12 +62,12 @@ function commaNumbers(): Field<number[]> {
     schema: v.pipe(
       v.unknown(),
       v.transform((raw) =>
-        splitComma(firstOf(raw as Raw))
+        splitComma(firstOf(raw))
           .map((s) => toNumber(s, NaN))
           .filter((n) => Number.isFinite(n)),
       ),
       v.array(v.number()),
-    ) as StandardSchemaV1<unknown, number[]>,
+    ),
     encode: (value) => joinComma(value),
   }
 }
@@ -80,9 +77,9 @@ function commaStrings(): Field<string[]> {
   return {
     schema: v.pipe(
       v.unknown(),
-      v.transform((raw) => splitComma(firstOf(raw as Raw))),
+      v.transform((raw) => splitComma(firstOf(raw))),
       v.array(v.string()),
-    ) as StandardSchemaV1<unknown, string[]>,
+    ),
     encode: (value) => joinComma(value),
   }
 }
@@ -92,14 +89,14 @@ function repeatStrings(): Field<string[]> {
   return {
     schema: v.pipe(
       v.unknown(),
-      v.transform((raw) => ensureArray(raw as Raw)),
+      v.transform((raw) => ensureArray(raw)),
       v.array(v.string()),
-    ) as StandardSchemaV1<unknown, string[]>,
+    ),
     encode: (value) => repeat(value),
   }
 }
 
-/** field コンストラクタ集。`f.string()` のように使う。 */
+/** field コンストラクタ集。`field.string()` のように使う。 */
 export const field = {
   string,
   number,
