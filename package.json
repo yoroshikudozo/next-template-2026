@@ -9,6 +9,7 @@
     "build:prod": "node scripts/with-env.mjs .env.prod next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest",
