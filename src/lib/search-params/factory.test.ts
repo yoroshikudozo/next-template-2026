@@ -62,6 +62,23 @@ describe("createSearchParams.parse", () => {
     expect(v.q).toBe("shoes")
     expect(v.size).toEqual(["s", "m"])
   })
+
+  it("ブラケットでネストする攻撃的入力でも throw せず fallback する", () => {
+    // qs.parse がネスト object/配列を吐くケース。以前はここで TypeError が
+    // クライアントレンダリングをクラッシュさせていた。
+    expect(() =>
+      sp.parse("page[x]=1&q[a]=b&type[z]=9&tag[0][bad]=1"),
+    ).not.toThrow()
+    const v = sp.parse("page[x]=1&q[a]=b&type[z]=9&tag[0][bad]=1")
+    expect(v).toEqual({
+      q: "",
+      size: [],
+      type: [],
+      tag: [],
+      sort: "asc",
+      page: 1,
+    })
+  })
 })
 
 describe("createSearchParams.serialize", () => {

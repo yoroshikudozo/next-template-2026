@@ -7,6 +7,13 @@ describe("firstOf", () => {
     expect(firstOf("a")).toBe("a")
     expect(firstOf(undefined)).toBeUndefined()
   })
+
+  it("非文字列（qs のネスト object 等）は throw せず undefined", () => {
+    // qs.parse("a[b]=1") → { a: { b: "1" } } のような攻撃的入力
+    expect(firstOf({ b: "1" })).toBeUndefined()
+    expect(firstOf([{ b: "1" }])).toBeUndefined()
+    expect(firstOf(123)).toBeUndefined()
+  })
 })
 
 describe("ensureArray", () => {
@@ -14,6 +21,11 @@ describe("ensureArray", () => {
     expect(ensureArray(["a", "b"])).toEqual(["a", "b"])
     expect(ensureArray("a")).toEqual(["a"])
     expect(ensureArray(undefined)).toEqual([])
+  })
+
+  it("非文字列の要素・値は捨てる", () => {
+    expect(ensureArray(["a", { b: "1" }, "c"])).toEqual(["a", "c"])
+    expect(ensureArray({ b: "1" })).toEqual([])
   })
 })
 

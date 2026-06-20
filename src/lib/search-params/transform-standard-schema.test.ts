@@ -36,4 +36,24 @@ describe("transformStandardSchema", () => {
     }
     expect(() => transformStandardSchema(asyncSchema, "x")).toThrow(TypeError)
   })
+
+  it("validate 内の同期 throw も SearchParamsError に正規化し cause を保持", () => {
+    const boom = new TypeError("boom")
+    const throwingSchema: StandardSchemaV1<unknown, string> = {
+      "~standard": {
+        version: 1,
+        vendor: "test",
+        validate: () => {
+          throw boom
+        },
+      },
+    }
+    try {
+      transformStandardSchema(throwingSchema, "x")
+      expect.unreachable("should have thrown")
+    } catch (e) {
+      expect(e).toBeInstanceOf(SearchParamsError)
+      expect((e as SearchParamsError).cause).toBe(boom)
+    }
+  })
 })

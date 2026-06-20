@@ -7,8 +7,11 @@ import type { StandardSchemaV1 } from "@standard-schema/spec"
 export class SearchParamsError extends Error {
   readonly issues: readonly StandardSchemaV1.Issue[]
 
-  constructor(issues: readonly StandardSchemaV1.Issue[]) {
-    super(issues[0]?.message ?? "Invalid search params")
+  constructor(
+    issues: readonly StandardSchemaV1.Issue[],
+    options?: { cause?: unknown },
+  ) {
+    super(issues[0]?.message ?? "Invalid search params", options)
     this.name = "SearchParamsError"
     this.issues = issues
   }
@@ -19,14 +22,24 @@ export class SearchParamsError extends Error {
  * 検証ライブラリ非依存にするための境界。
  *
  * - 同期スキーマ専用（クエリのパースは同期で完結すべき）。async なら投げる。
- * - 検証失敗時は SearchParamsError を投げる。フィールドが fallback を持つ前提なら
- *   通常ここには到達しない。
+ * - 検証失敗・スキーマ内 transform の同期 throw はいずれも SearchParamsError に
+ *   正規化する（生の TypeError 等を境界の外に漏らさない）。組み込み field は
+ *   常に fallback するので、通常この throw 経路には到達しない。
  */
 export function transformStandardSchema<T extends StandardSchemaV1>(
   schema: T,
   input: unknown,
 ): StandardSchemaV1.InferOutput<T> {
-  const result = schema["~standard"].validate(input)
+  let result: ReturnType<T["~standard"]["validate"]>
+  try {
+    result = schema["~standard"].validate(input) as typeof result
+  } catch (cause) {
+    // transform 内のユーザーコードが同期 throw した場合も型付きエラーに揃える。
+    throw new SearchParamsError(
+      [{ message: cause instanceof Error ? cause.message : "schema threw" }],
+      { cause },
+    )
+  }
 
   if (result instanceof Promise) {
     throw new TypeError("search-params schema must be synchronous")

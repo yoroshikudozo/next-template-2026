@@ -8,15 +8,27 @@
  * すべて pure function なので valibot 抜きで単体テストできる。
  */
 
-/** 複数値でも最初の 1 件だけ取る（単一値が欲しい場面）。 */
-export function firstOf(v: string | string[] | undefined): string | undefined {
-  return Array.isArray(v) ? v[0] : v
+/**
+ * 複数値でも最初の 1 件だけ取る（単一値が欲しい場面）。
+ *
+ * 入力は `unknown`。qs.parse はブラケットキー（`?a[b]=1`）でネストした object や
+ * object 配列を吐くため、文字列でない値は握りつぶす（throw しない）。
+ */
+export function firstOf(v: unknown): string | undefined {
+  if (typeof v === "string") return v
+  if (Array.isArray(v)) {
+    const first = v[0]
+    return typeof first === "string" ? first : undefined
+  }
+  return undefined
 }
 
-/** 常に配列へ正規化する。未指定は空配列。 */
-export function ensureArray(v: string | string[] | undefined): string[] {
-  if (v === undefined) return []
-  return Array.isArray(v) ? v : [v]
+/** 常に文字列配列へ正規化する。文字列でない要素・未指定は捨てる。 */
+export function ensureArray(v: unknown): string[] {
+  if (typeof v === "string") return [v]
+  if (Array.isArray(v))
+    return v.filter((x): x is string => typeof x === "string")
+  return []
 }
 
 /**
