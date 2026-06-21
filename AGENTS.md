@@ -36,3 +36,5 @@ Three layers, with a one-way dependency direction: **`app` → `features` → `l
   comma for closed sets, repeat for free text. See
   `src/lib/search-params/README.md`. (A PostToolUse hook warns on raw
   `new URLSearchParams` in consumer code.)
+- **Feature `types.ts`**: split runtime values into `consts.ts`; closed-set
+  enums use a const object + `keyof typeof`. See `src/features/CLAUDE.md`.
