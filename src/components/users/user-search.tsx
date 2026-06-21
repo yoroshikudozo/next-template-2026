@@ -2,24 +2,25 @@ import Link from "next/link"
 import { Suspense } from "react"
 import { UserFilters } from "@/components/users/user-filters"
 import { getUsers } from "@/features/users/api/get-users"
-import { userSearch } from "@/features/users/search-schema"
-import type { RawSearchParams } from "@/lib/search-params/factory"
+import { userSearchSchema } from "@/features/users/search-schema"
 
 /**
  * users 機能のサーバー View。searchParams を decode し、getUsers（MSW モック）で
  * 取得して一覧＋ページネーションを描画する。ページ送りは総数を知るここで Link 化。
+ *
+ * searchParams の型は Next が生成する PageProps から導出（独自 remap を持たない）。
  */
 export async function UserSearch({
   searchParams,
 }: {
-  searchParams: RawSearchParams
+  searchParams: Awaited<PageProps<"/users">["searchParams"]>
 }) {
-  const values = userSearch.parse(searchParams)
-  const { users, total, page, perPage } = await getUsers(values)
+  const filters = userSearchSchema.parse(searchParams)
+  const { users, total, page, perPage } = await getUsers(filters)
   const totalPages = Math.max(1, Math.ceil(total / perPage))
 
   const pageHref = (p: number) =>
-    `/users?${userSearch.serialize({ ...values, page: p })}`
+    `/users?${userSearchSchema.serialize({ ...filters, page: p })}`
 
   return (
     <main className="mx-auto max-w-2xl space-y-4 p-8">

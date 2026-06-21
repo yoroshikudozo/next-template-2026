@@ -1,5 +1,5 @@
 import { apiGet } from "@/lib/api/client"
-import { userSearch, type UserSearchValues } from "../search-schema"
+import { userSearchSchema, type UserSearchValues } from "../search-schema"
 import type { UsersResponse } from "../types"
 
 /**
@@ -7,6 +7,6 @@ import type { UsersResponse } from "../types"
  * 再利用するので、URL と API のパラメータ表現が 1 つに揃う。
  */
 export function getUsers(values: UserSearchValues): Promise<UsersResponse> {
-  const query = userSearch.serialize(values)
+  const query = userSearchSchema.serialize(values)
   return apiGet<UsersResponse>(`/users${query ? `?${query}` : ""}`)
 }

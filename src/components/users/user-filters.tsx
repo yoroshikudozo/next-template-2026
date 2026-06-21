@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSearchParamsState } from "@/lib/search-params/use-search-params-state"
 import { USER_ROLES, USER_STATUSES } from "@/features/users/types"
-import { SORT_OPTIONS, userSearch } from "@/features/users/search-schema"
+import { SORT_OPTIONS, userSearchSchema } from "@/features/users/search-schema"
 
 const SORT_LABEL: Record<(typeof SORT_OPTIONS)[number], string> = {
   name: "名前順",
@@ -16,25 +16,25 @@ const SORT_LABEL: Record<(typeof SORT_OPTIONS)[number], string> = {
  * useSearchParams を使うので親で <Suspense>。
  */
 export function UserFilters() {
-  const [values, setValues] = useSearchParamsState(userSearch, {
+  const [filters, setFilters] = useSearchParamsState(userSearchSchema, {
     history: "replace",
   })
 
   // テキスト検索はローカル state で即応答し、URL 同期は debounce する
   // （毎キーのナビゲーション/フェッチと履歴汚染・入力ラグを避ける）。
-  const [q, setQ] = useState(values.q)
+  const [q, setQ] = useState(filters.q)
   // URL が外部要因（戻る/共有 URL）で変わったらローカル入力を追従させる。
   // effect ではなくレンダー時に調整する React 推奨パターン。
-  const [syncedUrlQ, setSyncedUrlQ] = useState(values.q)
-  if (values.q !== syncedUrlQ) {
-    setSyncedUrlQ(values.q)
-    setQ(values.q)
+  const [syncedUrlQ, setSyncedUrlQ] = useState(filters.q)
+  if (filters.q !== syncedUrlQ) {
+    setSyncedUrlQ(filters.q)
+    setQ(filters.q)
   }
   useEffect(() => {
-    if (q === values.q) return
-    const t = setTimeout(() => setValues({ q, page: 1 }), 300)
+    if (q === filters.q) return
+    const t = setTimeout(() => setFilters({ q, page: 1 }), 300)
     return () => clearTimeout(t)
-  }, [q, values.q, setValues])
+  }, [q, filters.q, setFilters])
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm">
@@ -47,9 +47,9 @@ export function UserFilters() {
 
       <select
         className="rounded border px-2 py-1"
-        value={values.role ?? ""}
+        value={filters.role ?? ""}
         onChange={(e) =>
-          setValues({
+          setFilters({
             role: (e.target.value || undefined) as
               | (typeof USER_ROLES)[number]
               | undefined,
@@ -67,9 +67,9 @@ export function UserFilters() {
 
       <select
         className="rounded border px-2 py-1"
-        value={values.status ?? ""}
+        value={filters.status ?? ""}
         onChange={(e) =>
-          setValues({
+          setFilters({
             status: (e.target.value || undefined) as
               | (typeof USER_STATUSES)[number]
               | undefined,
@@ -87,9 +87,9 @@ export function UserFilters() {
 
       <select
         className="rounded border px-2 py-1"
-        value={values.sort}
+        value={filters.sort}
         onChange={(e) =>
-          setValues({ sort: e.target.value as (typeof SORT_OPTIONS)[number] })
+          setFilters({ sort: e.target.value as (typeof SORT_OPTIONS)[number] })
         }
       >
         {SORT_OPTIONS.map((s) => (

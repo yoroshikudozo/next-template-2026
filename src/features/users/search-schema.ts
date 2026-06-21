@@ -10,7 +10,7 @@ export const SORT_OPTIONS = ["name", "-created"] as const
  * role/status は optional（未設定なら絞り込みなし、URL から省略）。
  * `?q=alice&role=admin&status=active&sort=-created&page=2`
  */
-export const userSearch = createSearchParams({
+export const userSearchSchema = createSearchParams({
   q: field.string(),
   role: field.enums(USER_ROLES), // UserRole | undefined
   status: field.enums(USER_STATUSES), // UserStatus | undefined
@@ -19,4 +19,4 @@ export const userSearch = createSearchParams({
 })
 
 /** parse 済みの型付きクエリ値。 */
-export type UserSearchValues = ReturnType<typeof userSearch.parse>
+export type UserSearchValues = ReturnType<typeof userSearchSchema.parse>

@@ -1,7 +1,7 @@
 import type { User } from "@/features/users/types"
 
 /** 開発・テスト用の固定ユーザーデータ。users/handlers の GET /api/users が参照する。 */
-export const users: User[] = [
+export const users = [
   {
     id: "1",
     name: "Alice Johnson",
@@ -162,4 +162,4 @@ export const users: User[] = [
     status: "suspended",
     createdAt: "2025-10-05T09:00:00Z",
   },
-]
+] as const satisfies readonly User[]

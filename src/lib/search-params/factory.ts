@@ -3,10 +3,12 @@ import type { Field } from "./field"
 import { transformStandardSchema } from "./transform-standard-schema"
 
 /** Next.js のサーバーページが受け取る searchParams の生の形（multimap）。 */
-export type RawSearchParams = { [key: string]: string | string[] | undefined }
+export type SearchParamsRecord = {
+  [key: string]: string | string[] | undefined
+}
 
 /** parse が受け付ける入力。サーバーの object / URLSearchParams / クエリ文字列。 */
-export type SearchParamsInput = RawSearchParams | URLSearchParams | string
+export type SearchParamsInput = SearchParamsRecord | URLSearchParams | string
 
 // Field の encode が引数で contravariant なため、制約には any を使う
 // （個々のフィールド型は Values の infer で正しく取り出す）。
@@ -24,12 +26,12 @@ type Values<S extends Schema> = {
  * 配列に畳む。これでサーバー（既に object）とクライアント（URLSearchParams）が
  * 同じ shape になり、同じ field decoder を共有できる。
  */
-function normalizeInput(input: SearchParamsInput): RawSearchParams {
+function normalizeInput(input: SearchParamsInput): SearchParamsRecord {
   if (typeof input === "string") {
-    return qs.parse(input, { ignoreQueryPrefix: true }) as RawSearchParams
+    return qs.parse(input, { ignoreQueryPrefix: true }) as SearchParamsRecord
   }
   if (input instanceof URLSearchParams) {
-    return qs.parse(input.toString()) as RawSearchParams
+    return qs.parse(input.toString()) as SearchParamsRecord
   }
   return input
 }
