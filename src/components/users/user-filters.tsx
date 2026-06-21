@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSearchParamsState } from "@/lib/search-params/use-search-params-state"
-import { USER_ROLES, USER_STATUSES } from "@/features/users/types"
+import { USER_ROLES, USER_STATUSES } from "@/features/users/consts"
 import { SORT_OPTIONS, userSearchSchema } from "@/features/users/search-schema"
 
 const SORT_LABEL: Record<(typeof SORT_OPTIONS)[number], string> = {
