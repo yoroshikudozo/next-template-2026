@@ -1,9 +1,8 @@
-// role/status の許可値は単一ソース。型・スキーマ・UI 選択肢がすべてここから導出される。
-export const USER_ROLES = ["admin", "member", "guest"] as const
-export const USER_STATUSES = ["active", "invited", "suspended"] as const
+// typeof で派生するため値 import（emit 時に型のみ使用として除去される）。
+import { USER_ROLE, USER_STATUS } from "./consts"
 
-export type UserRole = (typeof USER_ROLES)[number]
-export type UserStatus = (typeof USER_STATUSES)[number]
+export type UserRole = (typeof USER_ROLE)[keyof typeof USER_ROLE]
+export type UserStatus = (typeof USER_STATUS)[keyof typeof USER_STATUS]
 
 export interface User {
   id: string

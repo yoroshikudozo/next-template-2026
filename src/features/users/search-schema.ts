@@ -1,6 +1,6 @@
 import { createSearchParams } from "@/lib/search-params/factory"
 import { field } from "@/lib/search-params/field"
-import { USER_ROLES, USER_STATUSES } from "./types"
+import { USER_ROLES, USER_STATUSES } from "./consts"
 
 export const SORT_OPTIONS = ["name", "-created"] as const
 
