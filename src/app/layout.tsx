@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { MSWProvider } from "@/components/msw-provider"
+import { registerServerMocks } from "@/mocks/register-server"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -23,6 +24,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // リクエストごとに（= HMR 後の最初のリクエストでも）サーバー MSW を再適用する。
+  registerServerMocks()
+
   return (
     <html
       lang="en"
