@@ -1,4 +1,5 @@
 import * as React from "react"
+import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -39,29 +40,35 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
 
 type PaginationLinkProps = {
   isActive?: boolean
+  /** 遷移先。未指定なら無効状態（境界のページ送り）として disabled で描画。 */
+  href?: React.ComponentProps<typeof Link>["href"]
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
-  React.ComponentProps<"a">
+  Omit<React.ComponentProps<typeof Button>, "render" | "size">
 
+/**
+ * ページネーションのリンク/ボタン。clickable は常に Button に寄せ、ナビが要るときは
+ * Button の `render` に next/link の Link を渡す（生 Link を直に使わない）。
+ * `href` を省くと disabled な Button（境界の前/次）。
+ */
 function PaginationLink({
   className,
   isActive,
   size = "icon",
+  href,
   ...props
 }: PaginationLinkProps) {
   return (
     <Button
+      aria-current={isActive ? "page" : undefined}
+      data-slot="pagination-link"
+      data-active={isActive}
       variant={isActive ? "outline" : "ghost"}
       size={size}
       className={cn(className)}
-      nativeButton={false}
-      render={
-        <a
-          aria-current={isActive ? "page" : undefined}
-          data-slot="pagination-link"
-          data-active={isActive}
-          {...props}
-        />
-      }
+      disabled={href === undefined}
+      nativeButton={href === undefined}
+      render={href === undefined ? undefined : <Link href={href} />}
+      {...props}
     />
   )
 }

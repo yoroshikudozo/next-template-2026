@@ -6,21 +6,26 @@ const PER_PAGE = 5
 
 /**
  * users 機能の MSW ハンドラ。`?q=&role=&status=&sort=&page=` で絞り込み・並び替え・
- * ページングする。role/status は未指定なら絞り込みなし。
+ * ページングする。role/status はカンマ区切りの複数値で OR 絞り込み（空なら絞り込みなし）。
  * src/mocks/handlers.ts がこれを集約する。
  */
 export const userHandlers = [
   http.get("*/api/users", ({ request }) => {
     const url = new URL(request.url)
     const q = (url.searchParams.get("q") ?? "").trim().toLowerCase()
-    const role = url.searchParams.get("role") // null = 絞り込みなし
-    const status = url.searchParams.get("status")
+    // `?role=admin,guest` を集合へ。空なら絞り込みなし。
+    const roles = (url.searchParams.get("role") ?? "")
+      .split(",")
+      .filter(Boolean)
+    const statuses = (url.searchParams.get("status") ?? "")
+      .split(",")
+      .filter(Boolean)
     const sort = url.searchParams.get("sort") ?? "name"
 
     const filtered = users.filter((u) => {
       if (q && !`${u.name} ${u.email}`.toLowerCase().includes(q)) return false
-      if (role && u.role !== role) return false
-      if (status && u.status !== status) return false
+      if (roles.length && !roles.includes(u.role)) return false
+      if (statuses.length && !statuses.includes(u.status)) return false
       return true
     })
 

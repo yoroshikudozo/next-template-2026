@@ -21,6 +21,14 @@ describe("getUsers (MSW 経由)", () => {
     expect(res.users.every((u) => u.role === "admin")).toBe(true)
   })
 
+  it("role を複数指定すると OR 絞り込みになる", async () => {
+    const res = await getUsers(userSearchSchema.parse({ role: "admin,guest" }))
+    expect(res.total).toBe(10) // admin 5 + guest 5
+    expect(
+      res.users.every((u) => u.role === "admin" || u.role === "guest"),
+    ).toBe(true)
+  })
+
   it("q で名前/メールを部分一致検索する", async () => {
     const res = await getUsers(userSearchSchema.parse({ q: "alice" }))
     expect(res.total).toBe(1)

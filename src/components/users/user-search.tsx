@@ -1,6 +1,12 @@
-import Link from "next/link"
 import { Suspense } from "react"
 import { UserFilters } from "@/components/users/user-filters"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 import { getUsers } from "@/features/users/api/get-users"
 import { userSearchSchema } from "@/features/users/search-schema"
 
@@ -55,22 +61,22 @@ export async function UserSearch({
         )}
       </ul>
 
-      <div className="flex justify-between text-sm">
-        {page > 1 ? (
-          <Link href={pageHref(page - 1)} className="underline">
-            ← 前
-          </Link>
-        ) : (
-          <span className="text-muted-foreground">← 前</span>
-        )}
-        {page < totalPages ? (
-          <Link href={pageHref(page + 1)} className="underline">
-            次 →
-          </Link>
-        ) : (
-          <span className="text-muted-foreground">次 →</span>
-        )}
-      </div>
+      <Pagination>
+        <PaginationContent className="w-full justify-between">
+          <PaginationItem>
+            <PaginationPrevious
+              text="前"
+              href={page > 1 ? pageHref(page - 1) : undefined}
+            />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext
+              text="次"
+              href={page < totalPages ? pageHref(page + 1) : undefined}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </main>
   )
 }
