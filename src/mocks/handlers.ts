@@ -1,10 +1,5 @@
-import { http, HttpResponse } from "msw"
+import { userHandlers } from "./users/handlers"
 
-export const handlers = [
-  http.get("https://api.example.com/user", () => {
-    return HttpResponse.json({
-      id: "1",
-      name: "Mocked User",
-    })
-  }),
-]
+// 各 feature の MSW ハンドラを集約する。feature 固有の定義は
+// features/<x>/handlers.ts 側に置く。node.ts / browser.ts がこれを使う。
+export const handlers = [...userHandlers]
