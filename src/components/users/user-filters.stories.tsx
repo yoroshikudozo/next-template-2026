@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 import { getRouter } from "@storybook/nextjs-vite/navigation.mock"
-import { expect, fireEvent, within } from "storybook/test"
+import { expect, userEvent, within } from "storybook/test"
 import { UserFilters } from "./user-filters"
 
 const meta = {
@@ -29,7 +29,7 @@ export const WithActiveFilters: Story = {
         pathname: "/users",
         query: {
           q: "alice",
-          role: "admin",
+          role: "admin,guest",
           status: "active",
           sort: "-created",
         },
@@ -42,8 +42,10 @@ export const WithActiveFilters: Story = {
 export const SelectingRoleUpdatesUrl: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const roleSelect = canvas.getByDisplayValue("権限：すべて")
-    await fireEvent.change(roleSelect, { target: { value: "admin" } })
+    // Base UI Select: トリガーを開いて選択肢（portal で body 直下）をクリック。
+    await userEvent.click(canvas.getByLabelText("権限で絞り込み"))
+    const popup = within(document.body)
+    await userEvent.click(await popup.findByRole("option", { name: "admin" }))
     await expect(getRouter().replace).toHaveBeenCalled()
   },
 }
