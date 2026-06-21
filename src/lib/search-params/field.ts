@@ -90,6 +90,26 @@ function commaNumbers(): Field<number[]> {
   }
 }
 
+/**
+ * カンマ区切りの enum 配列（閉じた集合の複数選択向け）。`?role=admin,member`。
+ * 許可リスト外の値は捨て、要素型を union `T` に絞り込む（`commaStrings` と違い型付き）。
+ * 未指定は空配列、空配列は encode で省略。
+ */
+function commaEnums<const T extends string>(allowed: readonly T[]): Field<T[]> {
+  return {
+    schema: v.pipe(
+      v.unknown(),
+      v.transform((raw) =>
+        splitComma(firstOf(raw)).filter((s): s is T =>
+          allowed.includes(s as T),
+        ),
+      ),
+      v.array(v.picklist(allowed)),
+    ),
+    encode: (value) => joinComma(value),
+  }
+}
+
 /** カンマ区切りの文字列配列（閉じた集合向け）。`?size=s,m,l`。 */
 function commaStrings(): Field<string[]> {
   return {
@@ -119,6 +139,7 @@ export const field = {
   string,
   number,
   enums,
+  commaEnums,
   commaNumbers,
   commaStrings,
   repeatStrings,

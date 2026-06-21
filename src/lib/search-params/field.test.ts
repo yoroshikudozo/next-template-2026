@@ -28,3 +28,26 @@ describe("field.enums — required（default 有り）", () => {
     expect(sp.parse({ sort: "x" }).sort).toBe("asc")
   })
 })
+
+describe("field.commaEnums — カンマ区切りの enum 配列", () => {
+  const sp = createSearchParams({
+    role: field.commaEnums(["admin", "member", "guest"]),
+  })
+
+  it("未設定は空配列", () => {
+    expect(sp.parse({}).role).toEqual([])
+  })
+
+  it("カンマ区切りを配列へ、許可外は捨てる", () => {
+    expect(sp.parse({ role: "admin,guest" }).role).toEqual(["admin", "guest"])
+    expect(sp.parse({ role: "admin,xxx,guest" }).role).toEqual([
+      "admin",
+      "guest",
+    ])
+  })
+
+  it("空配列は省略、値はカンマ連結で出る", () => {
+    expect(sp.serialize({ role: [] })).toBe("")
+    expect(sp.serialize({ role: ["admin", "guest"] })).toBe("role=admin,guest")
+  })
+})
