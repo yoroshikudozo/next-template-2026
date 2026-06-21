@@ -31,3 +31,8 @@ Three layers, with a one-way dependency direction: **`app` → `features` → `l
   package — which this app is not.)
 - Mark Client modules with `"use client"` and import them directly; keep
   isomorphic/server code free of client-only imports.
+- **URL query params go through `@/lib/search-params`** (`createSearchParams` /
+  `useSearchParamsState`); never hand-roll `URLSearchParams` parsing. Arrays:
+  comma for closed sets, repeat for free text. See
+  `src/lib/search-params/README.md`. (A PostToolUse hook warns on raw
+  `new URLSearchParams` in consumer code.)
