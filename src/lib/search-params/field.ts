@@ -1,6 +1,6 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec"
 import * as v from "valibot"
-import { ensureArray, firstOf, oneOf, splitComma, toNumber } from "./decode"
+import { ensureArray, firstOf, splitComma, toNumber } from "./decode"
 import { joinComma, omitEmpty, repeat, toStr } from "./encode"
 
 /**
@@ -41,18 +41,36 @@ function number(fallback = 0): Field<number> {
   }
 }
 
-/** 閉じた集合（enum）。許可リスト外・未指定は fallback。 */
+/**
+ * 閉じた集合（enum）。
+ * - `fallback` を渡すと必須: 許可リスト外・未指定は fallback（`Field<T>`）。
+ * - `fallback` を省くと optional: 未指定・許可外は undefined、encode で省略
+ *   （`Field<T | undefined>`）。"all" のような番兵を使わず「未設定」を型で表す。
+ */
+function enums<const T extends string>(
+  allowed: readonly T[],
+): Field<T | undefined>
 function enums<const T extends string>(
   allowed: readonly T[],
   fallback: T,
-): Field<T> {
+): Field<T>
+function enums<const T extends string>(
+  allowed: readonly T[],
+  fallback?: T,
+): Field<T> | Field<T | undefined> {
   return {
     schema: v.pipe(
       v.unknown(),
-      v.transform((raw) => oneOf(firstOf(raw), allowed, fallback)),
-      v.picklist(allowed),
+      v.transform((raw) => {
+        const x = firstOf(raw)
+        return allowed.includes(x as T) ? (x as T) : fallback
+      }),
+      fallback === undefined
+        ? v.optional(v.picklist(allowed))
+        : v.picklist(allowed),
     ),
-    encode: (value) => omitEmpty(value),
+    encode: (value: T | undefined) =>
+      value === undefined ? undefined : omitEmpty(value),
   }
 }
 
